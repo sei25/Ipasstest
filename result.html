@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>結果ページ</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="result-container">
+        <h1>結果</h1>
+        <p>正解数: <span id="correctCountValue"></span></p>
+        <p>不正解数: <span id="incorrectCountValue"></span></p>
+        <p>総合得点: <span id="scoreValue"></span></p>
+        <div class="explanations-container">
+            <h2>正解の解説</h2>
+            <div id="correctExplanations"></div>
+            <h2>不正解の解説</h2>
+            <div id="incorrectExplanations"></div>
+        </div>
+        <button id="returnButton">トップページに戻る</button>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const finalScore = localStorage.getItem('finalScore');
+            const correctCount = localStorage.getItem('correctCount');
+            const incorrectCount = localStorage.getItem('incorrectCount');
+            const correctExplanationsContainer = document.getElementById('correctExplanations');
+            const incorrectExplanationsContainer = document.getElementById('incorrectExplanations');
+
+            document.getElementById('scoreValue').textContent = finalScore;
+            document.getElementById('correctCountValue').textContent = correctCount;
+            document.getElementById('incorrectCountValue').textContent = incorrectCount;
+
+            const explanations = JSON.parse(localStorage.getItem('explanations')) || { correct: [], incorrect: [] };
+            explanations.correct.forEach((explanation, index) => {
+                const explanationElement = document.createElement('div');
+                explanationElement.className = 'explanation';
+                explanationElement.innerHTML = `
+                    <p>問題${index + 1}: ${explanation.question}</p>
+                    <p>正解: <span class="correct-answer">${explanation.correctAnswer}</span></p>
+                    <p>解説: ${explanation.explanation}</p>
+                    <p>かかった時間: ${explanation.timeTaken}秒</p>
+                `;
+                correctExplanationsContainer.appendChild(explanationElement);
+            });
+
+            explanations.incorrect.forEach((explanation, index) => {
+                const explanationElement = document.createElement('div');
+                explanationElement.className = 'explanation';
+                explanationElement.innerHTML = `
+                    <p>問題${index + 1}: ${explanation.question}</p>
+                    <p>正解: <span class="correct-answer">${explanation.correctAnswer}</span></p>
+                    <p>解説: ${explanation.explanation}</p>
+                    <p>かかった時間: ${explanation.timeTaken}秒</p>
+                `;
+                incorrectExplanationsContainer.appendChild(explanationElement);
+            });
+
+            document.getElementById('returnButton').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+
+            document.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    window.location.href = 'index.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

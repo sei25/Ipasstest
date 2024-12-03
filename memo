@@ -1,0 +1,134 @@
+// 選択されたカテゴリに基づいて問題を取得
+let selectedQuestions = [];
+
+// カテゴリを取得して問題をセット
+const category = localStorage.getItem('selectedCategory');
+if (category && questions[category]) {
+    selectedQuestions = questions[category];
+} else {
+    alert('問題が見つかりませんでした。');
+}
+
+// その後は既存の showQuestion, checkAnswer, nextQuestion などの関数を使って問題を出題する
+
+// 選択肢をランダムに並べ替える関数
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+// 問題をランダムに出題するための配列シャッフル
+shuffle(questions);
+const selectedQuestions = questions.slice(0, 3);
+
+function showQuestion() {
+    const currentQuestion = questions[currentQuestionIndex];
+    document.getElementById('question').textContent = currentQuestion.question;
+    const choicesContainer = document.getElementById('choices');
+    choicesContainer.innerHTML = '';
+
+    const shuffledChoices = shuffle([...currentQuestion.choices]);
+    shuffledChoices.forEach(choice => {
+        const choiceElement = document.createElement('div');
+        choiceElement.textContent = choice;
+        choiceElement.classList.add('choice');
+        choicesContainer.appendChild(choiceElement);
+    });
+
+    document.getElementById('answerInput').value = '';
+    document.getElementById('answerInput').focus();
+}
+
+function checkAnswer() {
+    const answerInput = document.getElementById('answerInput').value.trim();
+    const currentQuestion = questions[currentQuestionIndex];
+    const resultElement = document.getElementById('result');
+    let timeTaken = 60 - parseInt(document.getElementById('timerValue').textContent);
+    totalTime += timeTaken;
+
+    if (answerInput === currentQuestion.correctAnswer) {
+        correctCount++;
+        resultElement.innerHTML = <span style="color: green;">⭕️ 正解！</span>;
+        explanations.correct.push({ ...currentQuestion, timeTaken });
+    } else {
+        incorrectCount++;
+        resultElement.innerHTML = <span style="color: red;">❌ 不正解！</span>;
+        explanations.incorrect.push({ ...currentQuestion, timeTaken });
+    }
+
+    document.getElementById('nextButton').style.display = 'block';
+
+    // 最後の問題の場合は「終了」に変更
+    if (currentQuestionIndex === selectedQuestions.length - 1) {
+        document.getElementById('nextButton').textContent = '終了';
+    }
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < selectedQuestions.length) {
+        showQuestion();
+        startTimer();
+    } else {
+        finishGame();
+    }
+    document.getElementById('nextButton').style.display = 'none';
+    document.getElementById('result').innerHTML = '';
+}
+
+function finishGame() {
+    localStorage.setItem('finalScore', totalTime);
+    localStorage.setItem('correctCount', correctCount);
+    localStorage.setItem('incorrectCount', incorrectCount);
+    localStorage.setItem('explanations', JSON.stringify(explanations));
+    window.location.href = 'result.html';
+}
+
+let timerInterval;
+
+function startTimer() {
+    clearInterval(timerInterval); // タイマーをリセット
+    let timeLeft = 60;
+    const timerElement = document.getElementById('timerValue');
+    timerElement.textContent = timeLeft;
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        timerElement.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            checkAnswer();
+        }
+    }, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    showQuestion();
+    startTimer();
+
+    document.getElementById('answerInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            if (document.getElementById('nextButton').style.display === 'block') {
+                if (document.getElementById('nextButton').textContent === '終了') {
+                    finishGame();
+                } else {
+                    nextQuestion();
+                }
+            } else {
+                checkAnswer();
+            }
+        }
+    });
+
+    document.getElementById('nextButton').addEventListener('click', function() {
+        if (document.getElementById('nextButton').textContent === '終了') {
+            finishGame();
+        } else {
+            nextQuestion();
+        }
+    });
+});

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>ITパスポートタイピングクイズ</title>
+</head>
+<body>
+    <div class="container">
+        <h1>ITパスポートタイピングクイズ</h1>
+        <h2>カテゴリを選択してください</h2>
+        <div id="categorySelection">
+            <button onclick="selectCategory('management')">マネジメント系</button>
+            <button onclick="selectCategory('strategy')">ストラテジ系</button>
+            <button onclick="selectCategory('technology')">テクノロジ系</button>
+        </div>
+        <div id="selectedCategoryDisplay"></div>
+        <button id="startButton" style="display: none;" onclick="startGame()">ゲームスタート</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

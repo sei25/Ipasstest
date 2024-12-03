@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ITパスポートタイピングクイズ</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div id="timer">残り時間: <span id="timerValue">120</span>秒</div>
+        <div id="question-container">
+            <h1 id="question"></h1>
+            <div id="choices"></div>
+            <input type="text" id="answerInput" placeholder="ここにタイピング">
+            <div id="result"></div>
+            <button id="nextButton" style="display: none;">次の問題へ</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
